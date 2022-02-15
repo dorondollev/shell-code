@@ -1,0 +1,23 @@
+#!/bin/ksh
+
+PATH=$PATH:/bin:/usr/bin:/sbin:/usr/sbin
+CPUS=`psrinfo | tail -4 | awk '{print $1}'`
+export CPUS
+export PATH
+
+case "$1" in
+start)
+for i in $CPUS
+do
+        if [  `psrinfo -s $i` -eq 1 ]
+        then
+                psradm -f $i
+        fi
+done
+;;
+*)
+        echo "Usage: $0 { start | stop }"
+        exit 1
+        ;;
+esac
+exit 0

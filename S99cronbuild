@@ -1,0 +1,34 @@
+#!/bin/ksh
+
+export HOST=`/usr/bin/hostname`
+export CRONDIR=/app/cron
+export CRONFILE=${CRONDIR}/${HOST}.cron
+export CRONUSER=`who am i | awk '{print $1}'`
+export LOGFILE=/var/adm/messages
+export CURRENTCRON=/var/spool/cron/crontabs/root
+case "$1" in
+        start)
+        if [ $USER != "root" ] || [ $CRONUSER != "root" ]
+        then
+                echo "The following message came from S99cronbuild:" >>$LOGFILE
+                echo "Can't create cron file with other user then root." >>$LOGFILE
+                echo "Exiting..." >>$LOGFILE
+                exit 1
+        fi
+        if [ -f ${CRONFILE} ]
+        then
+                echo "Creating $CRONFILE as root cron file" >>$LOGFILE
+                /usr/bin/crontab ${CRONFILE}
+                exit $?
+        else
+                echo "The following message came from S99cronbuild:" >>$LOGFILE
+                echo "${CRONFILE} does not exist." >>$LOGFILE
+                echo "${CURRENTCRON} remains untouched." >>$LOGFILE
+        fi
+        ;;
+        *)
+        echo "Usage: /etc/rc2.d/S99cronbuild start"
+        exit 1
+        ;;
+esac
+exit 0
