@@ -199,5 +199,7 @@ snap_fs
 EXIT=$?
 end_backup
 check_backup
-exit $EXIT
+if [[ $EXIT -gt 0 ]]; then
+  exit $EXIT
+fi
 chk_bkp_log "WARNING"
